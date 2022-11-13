@@ -2,7 +2,11 @@ const supertest = require("supertest");
 
 const server = require("../../index");
 
-describe("Arithmetic service tests", () => {
+const doesErrorMessageExist = (errors, message) => {
+    return errors.filter(error => error.msg === message).length > 0;
+}
+
+describe.only("Arithmetic service tests", () => {
 
     afterEach(() => {
         server.close();
@@ -10,21 +14,25 @@ describe("Arithmetic service tests", () => {
 
     it("it should return an error due to incorrect payload", async () => {
         await supertest(server)
-            .post("/calculate")
-            .send({error:"3+3"})
+            .post("/add")
+            .send({})
             .expect(400)
             .then(async (response) => {
-                expect(response.text).toBe("No request body calculation value present")
+                const body = JSON.parse(response.text);
+
+                expect(doesErrorMessageExist(body.errors, "y does not exist")).toBe(true);
+                expect(doesErrorMessageExist(body.errors, "x does not exist")).toBe(true);
             });
     });
 
     it("it should return 6 by adding 3 and 3", async () => {
         await supertest(server)
-            .post("/calculate")
-            .send({calculation:"3+3"})
+            .post("/add")
+            .send({x: 3, y: 3})
             .expect(200)
             .then(async (response) => {
-                expect(response.text).toBe("6")
+                const body = JSON.parse(response.text);
+                expect(body.solution).toBe( 6)
             });
     });
 })

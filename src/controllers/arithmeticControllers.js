@@ -1,19 +1,34 @@
-const {chooseArithmeticFunction} = require("../sercvices/arithmeticServices");
+const {addition, subtraction, multiplication, division, modulation} = require("../sercvices/arithmeticServices");
 
-function calculate(request, response) {
-    const body = request.body;
-
-    if (!body) {
-        return response.status(400).send("No request body present");
-    }
-
-    if (!body.calculation) {
-        return response.status(400).send("No request body calculation value present");
-    }
-
-    const equation = chooseArithmeticFunction(body.calculation);
-    response.send(equation+"");
+function add(request, response) {
+    const {x, y} = request.body;
+    const solution = addition(x, y);
+    response.json({solution});
 }
 
-module.exports = {calculate};
+function subtract(request, response) {
+    const {x, y} = request.body;
+    const solution = subtraction(x, y);
+    response.json({solution});
+}
+
+function multiply(request, response) {
+    const {x, y} = request.body;
+    const solution = multiplication(x, y);
+    response.json({solution});
+}
+
+function divide(request, response) {
+    const {x, y} = request.body;
+    const solution = division(x, y);
+    response.json({solution});
+}
+
+function modulo(request, response) {
+    const {x, y} = request.body;
+    const solution = modulation(x, y);
+    response.send({solution});
+}
+
+module.exports = {add, subtract, multiply, divide, modulo};
 
